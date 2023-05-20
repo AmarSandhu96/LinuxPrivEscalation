@@ -1,6 +1,6 @@
-#include </home/manjaro/Programming/Tryhackme/headerFiles/CVE-2015-5602-sudo.h>
-#include </home/manjaro/Programming/Tryhackme/headerFiles/dirtyCowExploit.h>
-#include </home/manjaro/Programming/Tryhackme/headerFiles/exim_exploit.h>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/CVE-2015-5602-sudo.h>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/dirtyCowExploit.h>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/exim_exploit.h>
 #include <bits/stdc++.h>
 #include <csignal>
 #include <fstream>
