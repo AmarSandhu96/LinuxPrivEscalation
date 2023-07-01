@@ -1,10 +1,11 @@
-#!/usr/bin/expect
+#!/usr/bin/expect -d
 set AttackBox 10.10.139.200
 set AttackBoxPass b3f665953f9067dd
-set VulnLinux 10.10.181.99
+set VulnLinux 10.10.217.77
 set VulnLinuxPass password321
 
-spawn scp dummyfile.elf secondstage.sh root@$AttackBox:/root/
+
+spawn scp dummyfile.elf secondstage.exp root@$AttackBox:/root/
 expect "root@$AttackBox's password:"
 send $AttackBoxPass\n
 interact

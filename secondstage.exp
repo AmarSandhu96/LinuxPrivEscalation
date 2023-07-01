@@ -1,5 +1,5 @@
 #!/usr/bin/expect
-set VulnLinux 10.10.181.99
+set VulnLinux 10.10.217.77
 set VulnLinuxPass password321
 
 spawn scp dummyfile.elf user@$VulnLinux:/tmp/
