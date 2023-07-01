@@ -6,3 +6,8 @@ spawn scp dummyfile.elf user@$VulnLinux:/tmp/
 expect "user@$VulnLinux's password:"
 send $VulnLinuxPass\n
 interact
+
+spawn ssh user@$VulnLinux
+expect "user@$VulnLinux's password:"
+send $VulnLinuxPass\n
+interact
