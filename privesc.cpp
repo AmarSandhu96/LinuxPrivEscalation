@@ -156,7 +156,6 @@ bool CheckIfStraceExists(std::string test1) {
             }
             else
             {
-                std::cout << "strace installed" << std::endl;
                 return true;
             }
         }
@@ -568,7 +567,7 @@ void sharedObjectLibraryInjection(void) {
 
   if (CheckIfStraceExists(stracePath) == true) {
         std::system("rm /tmp/strace.txt");
-        std::cout << "[+] " << stracePath << " Found, Proceeding with Shared Object Library Injection" << std::endl;
+        std::cout << "[+] " << stracePath << " Found, Proceeding with Shared Object Library Injection\n" << std::endl;
         // strace stuff
         std::system("find / -type f -a \\( -perm -u+s -o -perm -g+s \\) -exec ls  "
                 "{} \\; 2> /dev/null > root_files.txt");
@@ -576,15 +575,28 @@ void sharedObjectLibraryInjection(void) {
         root_files.open("root_files.txt");
 
         if (root_files.is_open()) {
-        std::string data;
-        while (std::getline(root_files, data)) {
-        // std::cout << "[+] strace " +data+ " 2>&1 | grep -iE \"open|access|no
-        // such file\"" << std::endl;
-            std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\"").c_str());
-      }
+            std::string data;
+             while (getline(root_files, data)) {
+                // std::cout << "[+] strace " +data+ " 2>&1 | grep -iE \"open|access|no
+                // such file\"" << std::endl;
+                //std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" > libaries.txt").c_str());
+                if (data.find("/") != std::string::npos)
+                {
+                    
+                    std::cout << "strace " + data  << std::endl;
+                    std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
+                }
+                /*if (data.find("usr/bin") != std::string::npos)
+                {
+                    
+                    std::cout << "strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" " << std::endl;
+                    std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
+                }*/
+            }
+        }
     }
 
-  } else {
+     else {
     std::cout << "[!] " << stracePath
               << " Not Found, Skipping Shared Object Library Injection"
               << std::endl;
