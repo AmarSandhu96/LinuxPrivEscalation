@@ -19,13 +19,11 @@
 /*
  * TODO
  *
- * COMPLETE SHARED OBJECT LIBRARY INJECTION -> IS THIS DONE?, STRACE WORKS FINE.
- * NO NEED TO AUTOMATE THE INJECTION. COMPLETE LD_PRELOAD AND lD_LIBRARY
- * INJECTION -> NEED TO TEST ON THM AS ACTUALLY DOESNT WORK. MAKE PROJECT GIT
- * COMPLIANT ONCE SCANNING IS COMPLETE, MAKE A WAY TO TRY AN EXCECUTE THE
- * EXPLOITS.  MAYBE SUMMARY AT END AND A MENU WITH LIST OF EXPLOITS
- * AVALIABLE(CAN BE DONE WITH MAP). CAN THEN CALL DIRECTLY EXIM_PAYLOAD() AND
- * DIRTYCOW_PAYLOAD()
+ * 1) COMPLETE LD_PRELOAD AND lD_LIBRARY
+ * 2) MAYBE MAKE GOING THROUGH CONFIG SCAN BETTER? IT SHOULD POINT OUT
+ *    WHICH FILES SENSITIVE FILES IT CAN READ AND WRITE TO. E.G /USR/BIN/PASSWD RATHER 
+ *    THAN JUST SPITTING THEM OUT?
+ * 3) FINISH THE SUDO EXPLOIT, EVEN THE POC DOESNT ALWAYS WORK. FIGURE OUT FIX
  *
  * */
 
@@ -118,12 +116,13 @@ void ExploitSummary(void) {
     if (secondAnswer == "N" or secondAnswer == "n" or secondAnswer == "no") {
       ExploitSummary();
     } else {
-      ExploitSummary();
+        std::cout << "Invalid Answer" << std::endl;
     }
   }
 
   else {
-    ExploitSummary();
+
+        std::cout << "Invalid Answer" << std::endl;
   }
 }
 
@@ -539,9 +538,6 @@ void FindAllsuid(void) {
 
 void sharedObjectLibraryInjection(void) {
 
-  // TODO 02/07/2023 - EVERYTHING WORKS. HOWEVER STD::SYSTEM IS TOO SLOW WITH STRACE
-  // IS THERE ANYOTHER WAY TO IMPLEMENT SAME METHOD WITHOUT STD::SYSTEM?
-  // create C malware and execute?
   std::string stracePath = "usr/bin/strace";
   CheckIfStraceExists(stracePath);
   // std::cout << "Check file is: " << CheckIfFileExists << std::endl;
@@ -559,10 +555,10 @@ void sharedObjectLibraryInjection(void) {
             std::string data;
              while (getline(root_files, data)) {
                 if (data.find("/") != std::string::npos){
-             
-                    
                     std::cout << "strace " + data  << std::endl;
                     std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
+                    
+
                 }
                     
                 }
@@ -579,30 +575,12 @@ void sharedObjectLibraryInjection(void) {
 
 void SudoL(void) {
 
-    // TODO THIS FUNCTION NEEDS TO BE REWRITTEN
 
 
     std::system("sudo -l > sudoL.txt");
     std::system("sudo -l");
 
-  /*int flag = 0;
-  try
-  {
 
-          std::cout << "CRTL+C if you don't know the SUDO Password" << std::
-  endl; const int sudoList = std::system("sudo -l"); std::cout << sudoList <<
-  std::endl; flag = 1;
-
-  }
-  catch(int a)
-  {
-          std::cout << "" << std::endl;
-          flag = 0;
-
-  }
-
-
-  return flag;*/
 }
 
 int main(int argc, char *argv[]) {

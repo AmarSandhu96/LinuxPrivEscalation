@@ -1,9 +1,9 @@
 #!/usr/bin/expect 
-set AttackBox 10.10.148.225
-set AttackBoxPass e128e1e5445871d6
+set AttackBox 10.10.16.39
+set AttackBoxPass 3c1d0399f971b0d4
 
 
-spawn scp privesc.elf privesc.cpp   secondstage.exp root@$AttackBox:/root/
+spawn scp privesc.elf privesc.cpp test.elf test.cpp   secondstage.exp root@$AttackBox:/root/
 expect "root@$AttackBox's password:"
 send -- $AttackBoxPass\n
 interact

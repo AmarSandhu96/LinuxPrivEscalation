@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
             {
             
             
-                std::cout << "strace " + data + " 2<&1 | grep -iE \"open|access|no such file\" " << std::endl;;
-                std::system(("strace " + data + " 2<&1 | grep -iE \"open|access|no such file\" ").c_str());
+                std::cout << "strace " + data + " 2<&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" " << std::endl;;
+                std::system(("strace " + data + " 2<&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
             }
         }
     }
