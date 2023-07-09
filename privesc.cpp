@@ -142,7 +142,7 @@ bool CheckIfFileExists(std::string test) {
 
 
 bool CheckIfStraceExists(std::string test1) {
-    std::system("which strace > /tmp/strace.txt");
+    std::system("which strace > /tmp/strace.txt 2>/dev/null");
     std::ifstream stracefile;
     stracefile.open("/tmp/strace.txt");
     if (stracefile.is_open())
@@ -162,7 +162,6 @@ bool CheckIfStraceExists(std::string test1) {
     }
     
     {
-        std::cout << "Unable to open strace file" << std::endl;
         return false; 
     }
 
@@ -196,27 +195,10 @@ void DirtyCowCheck(void) {
 
   obj << release;
   obj >> newVersion;
-  int newVersion1 = 33;
+  // int newVersion1 = 33; FOR TESTING
 
-  switch (newVersion1) {
-  case 48:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 44:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 31:
-    std::cout << "Dirty Cow Attack not Compatabile" << std::endl;
-    break;
-  case 32:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 47:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  }
-  if (newVersion1 >= 50) {
-    std::cout << "[-] DirtyCow Attack not compatible" << std::endl;
+  if (newVersion >= 50) {
+    std::cout << "[-] DirtyCow Attack not compatible\n" << std::endl;
 
   } else {
     std::cout
@@ -248,24 +230,6 @@ void kernelShell(void) {
 
   obj << release;
   obj >> newVersion;
-
-  switch (newVersion) {
-  case 48:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 44:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 31:
-    std::cout << "Dirty Cow Attack not Compatabile" << std::endl;
-    break;
-  case 32:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  case 47:
-    std::cout << "Dirty Cow Attack not compatabile" << std::endl;
-    break;
-  }
   if (newVersion >= 50) {
     std::cout << "DirtyCow Attack not compatible" << std::endl;
     exit(EXIT_SUCCESS);
@@ -446,8 +410,8 @@ void FindAllsuid(void) {
   std::system("find / -type f -a \\( -perm -u+s -o -perm -g+s \\) -exec ls  {} "
               "\\; 2> /dev/null > root_files.txt");
   // std::system("sudo -V | grep \"Sudo version\" >> root_files.txt");
-  std::system("echo \"Sudo version 1.8.13\" >> root_files.txt");
-  std::system("echo \"/usr/bin/exim-4.81\" >> root_files.txt ");
+  std::system("echo \"Sudo version 1.8.13\" >> root_files.txt"); // USE FOR TESTING
+  // std::system("echo \"/usr/bin/exim-4.81\" >> root_files.txt "); USE FOR TESTING
   std::system("cat root_files.txt");
   putchar('\n');
 
@@ -461,11 +425,8 @@ void FindAllsuid(void) {
 
     // Runs with the root_files list and tries to find vulnerable exim.
     while (getline(root_files, data)) {
-      if (data.find("/usr/bin/exim-") !=
-          std::string::npos) // /usr/sbin/exim-4.84-3  | /usr/bin/exim-4.84-3 |
-                             // Sudo Version 1.9.12
-      {
-        // std::cout << "Found String: " << data << std::endl;
+        if (data.find("/usr/bin/exim-") != std::string::npos) { // /usr/sbin/exim-4.84-3  | /usr/bin/exim-4.84-3 |
+                    
 
         char exim[data.length() + 1];
         // char exim_test[] = "4.84";
@@ -473,7 +434,7 @@ void FindAllsuid(void) {
         // strcpy(exim, data.c_str());
 
         for (int i = 14; i < data.length(); i++) {
-          exim[i - 14] = data[i];
+            exim[i - 14] = data[i];
         }
 
         double test = std::stod(exim);
@@ -488,16 +449,36 @@ void FindAllsuid(void) {
                     << std::endl;
           ExploitSum[2] = "CVE-2016-1531 exim <= 4.84-3 local root exploit";
 
-        } else {
-
-          std::cout << "Exploit Not Valid [CVE-2016-1531 exim 4.84-3 local "
-                       "root exploit]"
-                    << std::endl;
         }
         // putchar('\n');
       }
+        if (data.find("usr/sbin/exim-") != std::string::npos)
+        {
+            char exim[data.length()];
+        // char exim_test[] = "4.84";
 
-      if (data.find("Sudo version ") !=
+        // strcpy(exim, data.c_str());
+
+        for (int i = 15; i < data.length(); i++) {
+            exim[i - 15] = data[i];
+        }
+
+        double test = std::stod(exim);
+
+        // std::cout << "Exim test: " << test << std::endl;
+        // std::cout << "Exim: " << exim << std::endl;
+
+        if (test <= 4.84) {
+
+          std::cout << "[+] Found Exploitable [CVE-2016-1531 exim <= 4.84-3 "
+                       "local root exploit]"
+                    << std::endl;
+          ExploitSum[2] = "CVE-2016-1531 exim <= 4.84-3 local root exploit";
+
+        }
+        }
+
+         if (data.find("Sudo version ") !=
           std::string::npos) // Sudo version 1.9.12p2
       {
         // std::cout << "Found SUDO Version: " << data << std::endl;
@@ -577,24 +558,17 @@ void sharedObjectLibraryInjection(void) {
         if (root_files.is_open()) {
             std::string data;
              while (getline(root_files, data)) {
-                // std::cout << "[+] strace " +data+ " 2>&1 | grep -iE \"open|access|no
-                // such file\"" << std::endl;
-                //std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" > libaries.txt").c_str());
-                if (data.find("/") != std::string::npos)
-                {
+                if (data.find("/") != std::string::npos){
+             
                     
                     std::cout << "strace " + data  << std::endl;
                     std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
                 }
-                /*if (data.find("usr/bin") != std::string::npos)
-                {
                     
-                    std::cout << "strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" " << std::endl;
-                    std::system(("strace " + data + " 2>&1 | grep -iE \"home\" | grep -iE \"open|access|no such file\" ").c_str());
-                }*/
+                }
             }
         }
-    }
+    
 
      else {
     std::cout << "[!] " << stracePath
@@ -605,19 +579,11 @@ void sharedObjectLibraryInjection(void) {
 
 void SudoL(void) {
 
-  std::string sudoPass1;
+    // TODO THIS FUNCTION NEEDS TO BE REWRITTEN
 
-  std::cout << "" << std::endl;
-  std::cout << "Enter SUDO password if known" << std::endl;
-  std::cout << "> ";
-  std::cin >> sudoPass1;
 
-  if (sudoPass1 == "none") {
-    std::cout << "Skipping SUDO Pass" << std::endl;
-  } else {
-    std::system("sudo -l");
     std::system("sudo -l > sudoL.txt");
-  }
+    std::system("sudo -l");
 
   /*int flag = 0;
   try

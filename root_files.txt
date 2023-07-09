@@ -33,4 +33,3 @@
 /usr/lib/Xorg.wrap
 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
 Sudo version 1.8.13
-/usr/bin/exim-4.81
