@@ -1,6 +1,8 @@
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/CVE-2015-5602-sudo.h>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/dirtyCowExploit.h>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/headerFiles/exim_exploit.h>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/CVE-2015-5602-sudo.cpp>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/dirtyCowExploit.cpp>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/exim_exploit.cpp>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/LD_preload.cpp>
+#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/LD_LIBRARY_PATH.cpp>
 #include <bits/stdc++.h>
 #include <csignal>
 #include <fstream>
@@ -19,7 +21,7 @@
 /*
  * TODO
  *
- * 1) COMPLETE LD_PRELOAD AND lD_LIBRARY
+ * 1) COMPLETE LD_PRELOAD AND lD_LIBRARY [16/07/2022 - NEED AUTOMATE THE LD_PRELOAD ATTACK IN HEADER FILE]
  * 2) MAYBE MAKE GOING THROUGH CONFIG SCAN BETTER? IT SHOULD POINT OUT
  *    WHICH FILES SENSITIVE FILES IT CAN READ AND WRITE TO. E.G /USR/BIN/PASSWD RATHER 
  *    THAN JUST SPITTING THEM OUT?
@@ -102,22 +104,15 @@ void ExploitSummary(void) {
       ExploitSummary();
     }
   } else if (answer == 3) {
-    std::cout
-        << "\n[!] ARE YOU SURE [Y/N]? -- CVE 2016-5195(DirtyCow) Kernel Exploit"
-        << std::endl;
 
-    std::string secondAnswer;
-    std::cout << "> ";
-    std::cin >> secondAnswer;
-    if (secondAnswer == "Y" or secondAnswer == "y" or secondAnswer == "yes") {
-      std::cout << "\n[+] Executing DirtyCow Kernel Exploit\n" << std::endl;
       DirtyCowExploit();
-    }
-    if (secondAnswer == "N" or secondAnswer == "n" or secondAnswer == "no") {
-      ExploitSummary();
-    } else {
-        std::cout << "Invalid Answer" << std::endl;
-    }
+    
+  } else if (answer == 4){
+    
+      LD_PRELOAD_SHELL();
+  } else if (answer == 5){
+
+    LD_LIBRARY_PATH_SHELL();
   }
 
   else {
@@ -149,7 +144,7 @@ bool CheckIfStraceExists(std::string test1) {
         std::string data; 
         while(getline(stracefile,data))
         {
-            if (data.find("strace not found") != std::string::npos)
+            if (data.find("[-] strace not found") != std::string::npos)
             {
                 return false;
             }
@@ -567,7 +562,7 @@ void sharedObjectLibraryInjection(void) {
     
 
      else {
-    std::cout << "[!] " << stracePath
+    std::cout << "[-] " << stracePath
               << " Not Found, Skipping Shared Object Library Injection"
               << std::endl;
   }
@@ -576,9 +571,51 @@ void sharedObjectLibraryInjection(void) {
 void SudoL(void) {
 
 
-
+    putchar('\n');
     std::system("sudo -l > sudoL.txt");
-    std::system("sudo -l");
+    
+    std::ifstream sudoLfile; 
+
+    sudoLfile.open("sudoL.txt");
+
+    if (sudoLfile.is_open())
+    {
+
+        std::string data;
+        std::string LD_PRELOAD_FLAG;
+        std::string LD_LIBRARY_PATH_FLAG;
+        while(getline(sudoLfile, data))
+        {
+
+            if (data.find("env_keep+=LD_PRELOAD") != std::string::npos)
+            {
+                std::cout << "[+] Located Vulnerable Enviroment Variable [LD_PRELOAD]\n" << std::endl;
+                ExploitSum[4] = "LD_PRELOAD Library Injection";
+                LD_PRELOAD_FLAG = "A";
+            }
+            if (data.find("env_keep+=LD_LIBRARY_PATH") != std::string::npos)
+            {
+                
+                std::cout << "[+] Located Vulnerable Enviroment Variable [LD_LIBRARY_PATH]\n" << std::endl;
+                ExploitSum[5] = "LD_LIBRARY_PATH Library Injection";
+                LD_LIBRARY_PATH_FLAG = "B";
+            }
+
+        }
+        if (LD_PRELOAD_FLAG != "A")
+        {
+            std::cout << "[-] Cannot find vulnerable LD_LIBRARY_PATH FAIL\n" << std::endl;
+        }
+        if (LD_LIBRARY_PATH_FLAG != "B")
+        {  
+            std::cout << "[-] Cannot find vulnerable LD_PRELOAD FAIL\n" << std::endl;
+        }
+
+    }
+    else {
+        std::cout << "Unable to open sudoL file\n";
+    }
+
 
 
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/expect
-set VulnLinux 10.10.219.183
+set VulnLinux 10.10.4.244
 set VulnLinuxPass password321
 
 spawn scp privesc.elf  user@$VulnLinux:/tmp/
