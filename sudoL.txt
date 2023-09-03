@@ -1,5 +1,0 @@
-Matching Defaults entries for arch on Arch:
-    env_reset, pwfeedback, insults
-
-User arch may run the following commands on Arch:
-    (ALL) ALL

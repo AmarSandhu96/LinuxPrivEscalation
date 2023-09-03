@@ -1,6 +1,6 @@
 #!/usr/bin/expect 
-set AttackBox 3.248.253.18
-set AttackBoxPass bc91f3e69ba6e6ff
+set AttackBox 18.203.67.37
+set AttackBoxPass 4e0c91fac84d2487
 
 
 spawn scp privesc.elf privesc.cpp  secondstage.exp root@$AttackBox:/root/

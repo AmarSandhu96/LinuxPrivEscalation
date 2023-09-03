@@ -18,14 +18,15 @@
 #include <vector>
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
+#define _NLINE putchar('\n');
 /*
  * TODO
  *
- * 1) COMPLETE LD_PRELOAD AND lD_LIBRARY [16/07/2022 - NEED AUTOMATE THE LD_PRELOAD ATTACK IN HEADER FILE]
- * 2) MAYBE MAKE GOING THROUGH CONFIG SCAN BETTER? IT SHOULD POINT OUT
- *    WHICH FILES SENSITIVE FILES IT CAN READ AND WRITE TO. E.G /USR/BIN/PASSWD RATHER 
- *    THAN JUST SPITTING THEM OUT?
- * 3) FINISH THE SUDO EXPLOIT, EVEN THE POC DOESNT ALWAYS WORK. FIGURE OUT FIX
+ * 
+ * 1) 03/09/2023 - Weak file permission has been turned into a map and printed out. looks good
+ * 2) Refactor Code
+ * 3) Think about redoing the exploit summary? if someone clicks 3 despite it not being shown it'll 
+ *    execute the function. Think about fixing. 
  *
  * */
 
@@ -87,22 +88,9 @@ void ExploitSummary(void) {
     }
 
   } else if (answer == 2) {
-    std::cout << "\n[!] ARE YOU SURE [Y/N]? -- CVE-2016-1531 exim <= 4.84-3 "
-                 "local root exploit"
-              << std::endl;
 
-    std::string secondAnswer;
-    std::cout << "> ";
-    std::cin >> secondAnswer;
-    if (secondAnswer == "Y" or secondAnswer == "y" or secondAnswer == "yes") {
-      std::cout << "Executing EXIM Attack" << std::endl;
       exim_payload();
-    }
-    if (secondAnswer == "N" or secondAnswer == "n" or secondAnswer == "no") {
-      ExploitSummary();
-    } else {
-      ExploitSummary();
-    }
+    
   } else if (answer == 3) {
 
       DirtyCowExploit();
@@ -362,18 +350,27 @@ void SysInfo(void) {
 }
 
 void WFP(void) {
-  std::cout << "" << std::endl;
-  std::cout << "[+] Weak Find Permission" << std::endl;
-  std::system("ls -al /$HOME/../../etc/passwd");
-  std::system("ls -al /$HOME/../../etc/shadow");
-  std::system("ls -al /$HOME/../../etc/pwd.db");
-  std::system("ls -al /$HOME/../../etc/master.passwd");
-  std::system("grep -v '^[^:]*:[x\\*]' /etc/passwd /etc/pwd.db "
+    
+    std::cout << "[+] Weak File Permissions" << std::endl;
+    _NLINE;
+    std::map<std::string, std::string> CommandsMap;
+    CommandsMap["cat -n /$HOME/../../etc/passwd"] = "/etc/passwd";
+    CommandsMap["cat -n /$HOME/../../etc/shadow"] = "/etc/shadow";
+    CommandsMap["cat -n /$HOME/../../etc/pwd.db"] = "/etc/pwd.db";
+    CommandsMap["cat -n /$HOME/../../etc/master.passwd"] = "/etc/master.passwd";
+    for (const auto& i:  CommandsMap)
+    {
+        std::cout << i.second << std::endl;
+        _NLINE;
+        std::system((i.first).c_str());
+        _NLINE;
+    }
+     std::system("grep -v '^[^:]*:[x\\*]' /etc/passwd /etc/pwd.db "
               "/etc/master.passwd /etc/group 2>/dev/null");
   // std::system("for d in `echo $PATH | tr ":" "\\n"`; do find $d -name "*.sh"
   // 2>/dev/null; done for d in `echo $PATH | tr ":" "\\n"`; do find $d -type -f
   // -executable 2>/dev/null; done"); // Scripts or binaries in PATH
-  std::cout << "" << std::endl;
+    _NLINE
 }
 
 void cronTab(void) {
@@ -508,7 +505,7 @@ void FindAllsuid(void) {
   } else
 
   {
-    std::cout << "RootFIle is not open" << std::endl;
+    std::cout << "RootFile is not open" << std::endl;
   }
 
   /*
