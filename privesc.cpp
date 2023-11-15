@@ -23,12 +23,8 @@
  * TODO
  *
  * 
- * 1) 03/09/2023 - Weak file permission has been turned into a map and printed out. looks good
+ * 1) 15/11/2023 - Fixed the ExploitSummary, now completely dynamic 
  * 2) Refactor Code
- * 3) Think about redoing the exploit summary? if someone clicks 3 despite it not being shown it'll 
- *    execute the function. Think about fixing. Could it be done with Two Dimensional vector? 
- *    0 - SudoExploitName SudoExploitFunc
- *    1 - EximExploitName EximExploitFunc
  *
  *
  * */
@@ -36,67 +32,123 @@
 std::map<int, std::string> ExploitSum;
 std::map<std::pair<int, std::string>, std::string> DynMap; 
 
+struct ExploitSummaryStruct{
+    int integerValue = 0;
+    std::string description;
+    std::string function; 
+
+};
+
+std::vector<ExploitSummaryStruct> ExploitVec;
+
+
+void addToExploitTable(int integerValue, std::string description, std::string function)
+{
+    ExploitSummaryStruct newEntry;
+    newEntry.integerValue = ExploitVec.size() + 1;
+    newEntry.description = description;
+    newEntry.function = function; //function pointer??
+    ExploitVec.push_back(newEntry);
+}
+
 void ExploitSummary(void) {
-  int ExploitSumSize = ExploitSum.size();
   int answer;
+  std::string selectDescription;
+  std::string selectFunction;
+  std::string secondanswer;
 
   std::cout << ("\n-----------------------------------------------\n");
   std::cout << "Exploitable Vulnerabilities" << std::endl;
   std::cout << ("------------------------------------------------\n");
 
-  /*std::cout << ExploitSum[1] << std::endl;
-  std::cout << ExploitSum[2] << std::endl;
-  std::cout << ExploitSum[3] << std::endl;
-  std::cout << ExploitSumSize << std::endl;*/
-  /*
-  if (ExploitSumSize == 0)
-  {
-          std::cout << "No Exploits Found" << std::endl;
-          exit(EXIT_SUCCESS);
-  }*/
-  
-  for (auto i : ExploitSum) {
-    std::cout << i.first << ") " << i.second << '\n';
-  }
-  std::cout << ("------------------------------------------------\n");
-  std::cout << "Select an Exploit" << std::endl;
-  std::cout << "> ";
 
-  std::cin >> answer;
 
-  /*if (answer == (i.first)) // IS THIS POSSIBLE? WOULD MAKE MUCH NICER
-  {
-          std::cout << "\n[!] ARE YOU SURE [Y/N]? --" << i.second << "\n" <<
-  std::endl;
-
-  }
-  */
-
-  if (answer == 1) {
       
-      sudoCVE();
 
-  } else if (answer == 2) {
-
-      exim_payload();
+      for (const ExploitSummaryStruct entry: ExploitVec)
+      {
     
-  } else if (answer == 3) {
+          std::cout << entry.integerValue << ") " << entry.description << " " << entry.function << std::endl;
+          //selectNumber = entry.integerValue;
+          //selectDescription = entry.description;
+          //selectFunction = entry.function;
 
-      DirtyCowExploit();
+
+      }
     
-  } else if (answer == 4){
-    
-      LD_PRELOAD_SHELL();
-  } else if (answer == 5){
+      std::cout << "\n-----------------------------------------\n" << std::endl;
+      std::cout << "Select an Exploit" << std::endl;
+      std::cout << "> ";
+ 
+      std::cin >> answer;
+     
 
-      LD_LIBRARY_PATH_SHELL();
-  }
+    for (const ExploitSummaryStruct entry: ExploitVec)
+    {
 
-  else {
 
-        std::cout << "Invalid Answer" << std::endl;
-  }
+      if (answer == entry.integerValue )
+      {
+          std::cout << "You Selected: " << entry.integerValue << " " << entry.description << " " << entry.function << std::endl;
+          _NLINE;
+          std::cout << "Are you sure? [Y/N]?" << std::endl;
+          std::cout << "> ";
+          std::cin >> secondanswer;
+          if (secondanswer == "Y" || secondanswer == "y" || secondanswer == "yes")
+          {
+
+            if (entry.description.find("CVE-2016-5195") != std::string::npos)
+            {
+                std::cout << "Exploiting DirtyCow" << std::endl;
+                // DirtyCowExploit();
+            }
+            if (entry.description.find("CVE-2015-5602") != std::string::npos )
+            {
+                std::cout << "Exploiting Sudo Exploit" << std::endl;
+                // sudoCVE();
+            }
+            if (entry.description.find("CVE-2016-1531") != std::string::npos)
+            {
+                std::cout << "Exploiting Exim" << std::endl;
+                // exim_payload();
+            }
+            if (entry.description.find("LD_PRELOAD") != std::string::npos)
+            {
+                std::cout << "Exploiting LD_PRELOAD " << std::endl;
+                // LD_PRELOAD_SHELL();
+            }
+            if (entry.description.find("LD_LIBRARY_PATH") != std::string::npos)
+            {
+                std::cout << "Exploiting LD_LIBRARY_PATH" << std::endl;
+                // LD_LIBRARY_PATH_SHELL();
+            }
+
+          }
+          else 
+          {
+              ExploitSummary();
+          }
+
+      }
+      else
+      {
+          continue;
+      }
+
+    }  
 }
+      
+     
+     
+     
+
+
+        
+    
+    
+
+  
+
 
 bool CheckIfFileExists(std::string test) {
   std::ofstream file;
@@ -163,16 +215,19 @@ void DirtyCowCheck(void) {
 
   obj << release;
   obj >> newVersion;
-  // int newVersion1 = 33; FOR TESTING
+  int newVersion1 = 33;
 
-  if (newVersion >= 50) {
+  if (newVersion1 >= 50) {
     std::cout << "[-] DirtyCow Attack not compatible\n" << std::endl;
 
   } else {
-    std::cout
-        << "[+] DirtyCow Attack Compatible [CVE 2016-5195(DirtyCow) Exploit]"
-        << std::endl;
-    ExploitSum[3] = "CVE 2016-5195(DirtyCow) Exploit";
+    //std::cout
+    //    << "[+] DirtyCow Attack Compatible [CVE 2016-5195(DirtyCow) Exploit]"
+    //    << std::endl;
+    //ExploitSum[3] = "CVE 2016-5195(DirtyCow) Exploit";
+      addToExploitTable(0, "CVE-2016-5195(DirtyCow Exploit)", " ");
+      addToExploitTable(0, "LastExploit", " ");
+
   }
 }
 
@@ -453,7 +508,8 @@ void FindAllsuid(void) {
           std::cout << "[+] Found Exploitable [CVE-2016-1531 exim <= 4.84-3 "
                        "local root exploit]"
                     << std::endl;
-          ExploitSum[2] = "CVE-2016-1531 exim <= 4.84-3 local root exploit";
+          //ExploitSum[2] = "CVE-2016-1531 exim <= 4.84-3 local root exploit";
+          addToExploitTable(0, "CVE-2016-1531 exim <= 4.84-3 local root exploit", " ");
 
         }
         // putchar('\n');
@@ -507,7 +563,8 @@ void FindAllsuid(void) {
           std::cout << "[+] Found Exploitable SUDO [Sudo <= 1.8.14 Local "
                        "Privilege Escalation]"
                     << std::endl;
-          ExploitSum[1] = "Sudo <= 1.8.14 Local Privilege Escalation";
+          //ExploitSum[1] = "Sudo <= 1.8.14 Local Privilege Escalation";
+          addToExploitTable(0, "CVE-2015-5602 Sudo <= 1.8.14 Local Privilege Escalation", " ");
           // JUST SCANNING
 
         } else {
@@ -602,14 +659,16 @@ void SudoL(void) {
             if (data.find("env_keep+=LD_PRELOAD") != std::string::npos)
             {
                 std::cout << "[+] Located Vulnerable Enviroment Variable [LD_PRELOAD]\n" << std::endl;
-                ExploitSum[4] = "LD_PRELOAD Library Injection";
+                //ExploitSum[4] = "LD_PRELOAD Library Injection";
+                addToExploitTable(0, "LD_PRELOAD Library Injection", " ");
                 LD_PRELOAD_FLAG = "A";
             }
             if (data.find("env_keep+=LD_LIBRARY_PATH") != std::string::npos)
             {
                 
                 std::cout << "[+] Located Vulnerable Enviroment Variable [LD_LIBRARY_PATH]\n" << std::endl;
-                ExploitSum[5] = "LD_LIBRARY_PATH Library Injection";
+                //ExploitSum[5] = "LD_LIBRARY_PATH Library Injection";
+                addToExploitTable(0, "LD_LIBRARY_PATH Library Injection", " ");
                 LD_LIBRARY_PATH_FLAG = "B";
             }
 
@@ -633,39 +692,44 @@ void SudoL(void) {
 }
 
 int main(int argc, char *argv[]) {
-  std::string sudoPass;
-  int argFlag = 0;
+    std::string sudoPass;
 
-  if (argc == 1) {
-    std::cout << "No Argument supplied" << std::endl;
-    exit(EXIT_SUCCESS);
-  }
+    addToExploitTable(0, "test", "test");
+    int argFlag = 0;
+    std::string help =  "\n-Scan [scan for escalation]\n"
+                     "-shell [Generated a Reverse Shell in C] usage: "
+                     "./privesc -shell LHOST=<IP> LPORT=<PORT>\n"
+                     "-library [Generated a Shared Object Library which executes /bin/sh -p]";
+
+    if (argc == 1) 
+    {
+        std::cout << "No Argument supplied\n" << help << std::endl;
+        exit(EXIT_SUCCESS);
+    }
   
-  if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "/?") {
-    std::cout << "\n-Scan [scan for escalation]\n"
-                 "-shell [Generated a Reverse Shell in C] usage: "
-                 "./privesc -shell LHOST=<IP> LPORT=<PORT>\n"
-                 "-library [Generated a Shared Object Library which executes /bin/sh\n]";
-    putchar('\n');
-    exit(EXIT_SUCCESS);
-  }
+    if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "/?" || std::string(argv[1]) == "-help") 
+    {
+        std::cout << help << std::endl;
+        putchar('\n');
+        exit(EXIT_SUCCESS);
+    }
   
-  if (std::string(argv[1]) == "-scan") {
-    std::cout << "\nScan Mode" << std::endl;
+    if (std::string(argv[1]) == "-scan") 
+    {
+        std::cout << "\nScan Mode" << std::endl;
 
-    SysInfo();
-    WFP();
-    cronTab();
-    PasswordsAndKeys();
-    FindAllsuid();
-    DirtyCowCheck();
-    sharedObjectLibraryInjection();
-    SudoL();
-    ExploitSummary();
+        SysInfo();
+        WFP();
+        cronTab();
+        PasswordsAndKeys();
+        FindAllsuid();
+        DirtyCowCheck();
+        sharedObjectLibraryInjection();
+        SudoL();
+        ExploitSummary();
 
-    // Scan Functions
-    exit(EXIT_SUCCESS);
-  }
+        exit(EXIT_SUCCESS);
+    }
 
     if (std::string(argv[1]) == "-shell") 
     {
@@ -696,23 +760,23 @@ int main(int argc, char *argv[]) {
             exit(EXIT_SUCCESS);
         }
 
-  }
-  if (std::string(argv[1]) == "-library") 
-  {
-      writeLibrary();
-      exit(EXIT_SUCCESS);
-  } 
-  else 
-  {
-      std::cout << "Settings incorrect, Did you mean \"-library\"? " << std::endl;
-      exit(EXIT_FAILURE);
-  }
+    }
+    if (std::string(argv[1]) == "-library") 
+    {
+        writeLibrary();
+        exit(EXIT_SUCCESS);
+    } 
+    else 
+    {
+        std::cout << "Settings incorrect\n" << help << std::endl;
+        exit(EXIT_FAILURE);
+    }
     
-  if (std::string(argv[1]) != "-scan" || std::string(argv[1]) != "-shell" || std::string(argv[1]) != "-library" ) 
-  {
-    std::cout << "Invalid Arguments" << std::endl;
-    exit(EXIT_FAILURE);
-  }
+    if (std::string(argv[1]) != "-scan" || std::string(argv[1]) != "-shell" || std::string(argv[1]) != "-library" ) 
+    {
+        std::cout << "Invalid Arguments" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
 
 
