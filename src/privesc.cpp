@@ -288,6 +288,7 @@ int writeLibrary(void)
     exit(EXIT_SUCCESS);
 }
 
+
 int writeShellNew(std::string lhost, std::string lport)
 {
     _NLINE;
