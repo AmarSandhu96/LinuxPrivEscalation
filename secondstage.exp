@@ -1,0 +1,13 @@
+#!/usr/bin/expect
+set VulnLinux 10.10.232.48
+set VulnLinuxPass NULL
+
+spawn scp privesc.elf  user@$VulnLinux:/tmp/
+expect "user@$VulnLinux's password:"
+send $VulnLinuxPass\n
+interact
+
+spawn ssh user@$VulnLinux 
+expect "user@$VulnLinux's password:"
+send $VulnLinuxPass\n
+interact
