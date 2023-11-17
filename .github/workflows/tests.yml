@@ -27,7 +27,8 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Enter test directory
-        run: cd tests
+        run: |
+          cd tests
 			
         
 
