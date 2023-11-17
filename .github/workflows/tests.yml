@@ -28,6 +28,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Enter test directory
         run: cd tests
+			 pwd
+        
 
       # Runs a set of commands using the runners shell
       - name: Run Compiltation Test
