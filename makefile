@@ -1,6 +1,4 @@
-all: privesc
-
-privesc: privesc.cpp
-	g++ -o privesc.elf privesc.cpp -g -static
-	./privesc.elf -scan
+privesc: src/privesc.cpp
+	g++ -o bin/privesc.elf src/privesc.cpp -g -static
+	bin/privesc.elf -scan
 

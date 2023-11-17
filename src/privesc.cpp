@@ -1,8 +1,8 @@
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/CVE-2015-5602-sudo.cpp>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/dirtyCowExploit.cpp>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/exim_exploit.cpp>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/LD_preload.cpp>
-#include </home/arch/Documents/Programming/TryHackMe/LinuxPriv/LinuxPrivEscalation/sourcefiles/LD_LIBRARY_PATH.cpp>
+#include "CVE-2015-5602-sudo.cpp"
+#include "dirtyCowExploit.cpp"
+#include "exim_exploit.cpp"
+#include "LD_preload.cpp"
+#include "LD_LIBRARY_PATH.cpp"
 #include <bits/stdc++.h>
 #include <csignal>
 #include <fstream>
@@ -580,22 +580,7 @@ void FindAllsuid(void) {
     std::cout << "RootFile is not open" << std::endl;
   }
 
-  /*
-
-  std::ifstream ifile;
-  ifile.open("/usr/sbin/exim-4.8*");
-  if(ifile)
-  {
-          int flagfile = 1;
-          std::cout << "File Exists, FLAG: " << flagfile << std::endl;
-
-  }
-  else
-  {
-          int flagfile = 0;
-          std::cout << "File Does NOT Exist, FLAG: " << flagfile << std::endl;
-  }
-  */
+  std::system("rm root_files.txt");
 
   putchar('\n');
 }
@@ -687,7 +672,7 @@ void SudoL(void) {
         std::cout << "Unable to open sudoL file\n";
     }
 
-
+    std::system("rm sudoL.txt");
 
 }
 
