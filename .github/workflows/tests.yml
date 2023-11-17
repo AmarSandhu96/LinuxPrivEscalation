@@ -28,6 +28,9 @@ jobs:
       - name: Working Directory
         run: |
           pwd
+      - name: Folders
+        run: |
+          ls
       # Runs a set of commands using the runners shell
       - name: Run Compiltation Test
         run: |
