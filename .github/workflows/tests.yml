@@ -25,17 +25,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Working Directory
-        run: |
-          pwd
-      - name: Folders
-        run: |
-          ls
       # Runs a set of commands using the runners shell
       - name: Run Compiltation Test
         run: |
           python tests/CompilationTest.py
 
-      - name: Finished
-        run: |
-          echo "[+] Finished Tests"
