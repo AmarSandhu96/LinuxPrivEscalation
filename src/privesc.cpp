@@ -342,7 +342,7 @@ int writeShellNew(std::string lhost, std::string lport)
   std::cout << "[+] DOUBLE CHECK THE PAYLOAD, HAPPY?[Y/N]: ";
   std::string answer;
   std::cin >> answer;
-  if (answer == "Y") {
+  if (answer == "Y" || answer == "y" || answer == "Yes" || answer == "yes") {
     std::cout << "\n[+] SAVING PAYLOAD" << std::endl;
     std::ofstream outf{"shell.c"};
     if (!outf) {

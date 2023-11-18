@@ -26,7 +26,11 @@ jobs:
       - uses: actions/checkout@v3
 
       # Runs a set of commands using the runners shell
-      - name: Run Compiltation Test
+      - name: Run Project Compiltation Test
         run: |
           python tests/CompilationTest.py
+
+      - name: Run Shell Compilation Test
+        run: |
+          python tests/WriteShellCompilationTest.py
 
