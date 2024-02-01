@@ -20,7 +20,7 @@
 #define EXIT_SUCCESS 0
 #define _NLINE putchar('\n');
 /*
- * TODO
+ * TODO: 
  *
  * 
  * 1) 15/11/2023 - Fixed the ExploitSummary, now completely dynamic 
